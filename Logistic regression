@@ -1,0 +1,93 @@
+# Consider the “Default” data which comes with the ISLR package containing 10,000 rows of credit card users and if they default or not. 
+#When you load this package, it will become available to you.  Make a local copy to a variable name of your choosing, e.g., DefaultData = Default.  
+#Note that you can type “head(Default)” to show the first 6 rows, but it won’t appear in your upper right corner unless you copy it to a local file.  
+#The dataset has a column “default” as the dependent, and “student”, “balance”, and “income” as independents.  Perform a logistic regression 
+#as well as a Naïve Bayes procedure and determine the confusion matrix for each.  Compare the two results and give a paragraph as to which you think does a better job in this case.
+
+
+#Solution
+
+View(Default)
+> head(Default)
+> LRdef1= glm(default~student+balance+income, data= Default, family=binomial(link="logit"))
+> summary(LRdef1)
+> pred<-predict(LRdef1,newdata = Default,type = "response")
+> table(Default$default,pred>=0.5)
+
+Output:
+  default student   balance    income
+1      No      No  729.5265 44361.625
+2      No     Yes  817.1804 12106.135
+3      No      No 1073.5492 31767.139
+4      No      No  529.2506 35704.494
+5      No      No  785.6559 38463.496
+6      No     Yes  919.5885  7491.559
+
+
+Call:
+glm(formula = default ~ student + balance + income, family = binomial(link = "logit"), 
+    data = Default)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.4691  -0.1418  -0.0557  -0.0203   3.7383  
+
+Coefficients:
+              Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -1.087e+01  4.923e-01 -22.080  < 2e-16 ***
+studentYes  -6.468e-01  2.363e-01  -2.738  0.00619 ** 
+balance      5.737e-03  2.319e-04  24.738  < 2e-16 ***
+income       3.033e-06  8.203e-06   0.370  0.71152    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 2920.6  on 9999  degrees of freedom
+Residual deviance: 1571.5  on 9996  degrees of freedom
+AIC: 1579.5
+
+Number of Fisher Scoring iterations: 8
+
+
+
+      FALSE TRUE
+  No   9627   40
+  Yes   228  105
+
+
+
+
+
+
+b) d_naive_model<-NaiveBayes(default~.,data=Default)
+> prediction<- predict(d_naive_model,Default)
+There were 50 or more warnings (use warnings() to see the first 50)
+> confusionMatrix(Default$default,prediction$class)
+Confusion Matrix and Statistics
+
+          Reference
+Prediction   No  Yes
+       No  9615   52
+       Yes  241   92
+                                          
+               Accuracy : 0.9707          
+                 95% CI : (0.9672, 0.9739)
+    No Information Rate : 0.9856          
+    P-Value [Acc > NIR] : 1               
+                                          
+                  Kappa : 0.3731          
+ Mcnemar's Test P-Value : <2e-16          
+                                          
+            Sensitivity : 0.9755          
+            Specificity : 0.6389          
+         Pos Pred Value : 0.9946          
+         Neg Pred Value : 0.2763          
+             Prevalence : 0.9856          
+         Detection Rate : 0.9615          
+   Detection Prevalence : 0.9667          
+      Balanced Accuracy : 0.8072          
+                                          
+       'Positive' Class : No     
+
+
